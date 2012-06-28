@@ -28,7 +28,7 @@ module OmniAuth
           mobile_request = ua.downcase =~ Regexp.new(MOBILE_USER_AGENTS)
           options[:display] = mobile_request ? 'touch' : 'page'
         end
-        options[:display] = false if !options.has_key?(:immediate)
+        options[:prompt] = 'login consent'
         super
       end
 
