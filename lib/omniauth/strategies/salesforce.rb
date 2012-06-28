@@ -17,6 +17,7 @@ module OmniAuth
         :scope,
         :display,
         :immediate,
+        :prompt,
         :state
       ]
 
