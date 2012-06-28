@@ -28,6 +28,7 @@ module OmniAuth
           mobile_request = ua.downcase =~ Regexp.new(MOBILE_USER_AGENTS)
           options[:display] = mobile_request ? 'touch' : 'page'
         end
+        options[:display] = false if !options.has_key?(:immediate)
         super
       end
 
@@ -78,7 +79,7 @@ module OmniAuth
           'issued_at' => access_token.params['issued_at']
         })
       end
-      
+
     end
 
     class SalesforceSandbox < OmniAuth::Strategies::Salesforce
