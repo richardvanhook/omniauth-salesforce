@@ -23,7 +23,8 @@ module OmniAuth
       def request_phase
         req = Rack::Request.new(@env)
         options.update(req.params)
-        ua = req.user_agent.to_s
+        # Rack::Request#user_agent is not available in Rack 1.0.1
+        ua = req.env['HTTP_USER_AGENT'].to_s
         if !options.has_key?(:display)
           mobile_request = ua.downcase =~ Regexp.new(MOBILE_USER_AGENTS)
           options[:display] = mobile_request ? 'touch' : 'page'
@@ -34,7 +35,7 @@ module OmniAuth
       def auth_hash
         signed_value = access_token.params['id'] + access_token.params['issued_at']
         raw_expected_signature = OpenSSL::HMAC.digest('sha256', options.client_secret, signed_value)
-        expected_signature = Base64.strict_encode64 raw_expected_signature
+        expected_signature = strict_encode64(raw_expected_signature)
         signature = access_token.params['signature']
         fail! "Salesforce user id did not match signature!" unless signature == expected_signature
         super
@@ -78,7 +79,12 @@ module OmniAuth
           'issued_at' => access_token.params['issued_at']
         })
       end
-      
+
+    private
+      # Base64.strict_encode64 is not available on Ruby 1.8.7
+      def strict_encode64(bin)
+        [bin].pack("m0")
+      end
     end
 
     class SalesforceSandbox < OmniAuth::Strategies::Salesforce
