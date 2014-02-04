@@ -17,6 +17,7 @@ module OmniAuth
         :scope,
         :display,
         :immediate,
+        :prompt,
         :state
       ]
 
@@ -28,6 +29,7 @@ module OmniAuth
           mobile_request = ua.downcase =~ Regexp.new(MOBILE_USER_AGENTS)
           options[:display] = mobile_request ? 'touch' : 'page'
         end
+        options[:prompt] = 'login consent'
         super
       end
 
@@ -78,7 +80,7 @@ module OmniAuth
           'issued_at' => access_token.params['issued_at']
         })
       end
-      
+
     end
 
     class SalesforceSandbox < OmniAuth::Strategies::Salesforce
