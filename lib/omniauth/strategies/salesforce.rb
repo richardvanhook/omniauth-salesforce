@@ -33,7 +33,7 @@ module OmniAuth
 
       def auth_hash
         signed_value = access_token.params['id'] + access_token.params['issued_at']
-        raw_expected_signature = OpenSSL::HMAC.digest('sha256', options.client_secret, signed_value)
+        raw_expected_signature = OpenSSL::HMAC.digest('sha256', options.client_secret.to_s, signed_value)
         expected_signature = Base64.strict_encode64 raw_expected_signature
         signature = access_token.params['signature']
         fail! "Salesforce user id did not match signature!" unless signature == expected_signature
@@ -67,7 +67,7 @@ module OmniAuth
       def raw_info
         access_token.options[:mode] = :query
         access_token.options[:param_name] = :oauth_token
-        @raw_info ||= access_token.post(access_token['id']).parsed
+        @raw_info ||= access_token.get(access_token['id']).parsed
       end
 
       extra do
